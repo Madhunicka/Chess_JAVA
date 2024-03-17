@@ -15,29 +15,32 @@ import javax.swing.JPanel;
 public class ChessView extends JPanel {
 
 	private static final long serialVersionUID = 1038510914214091521L;
-	int originX = 55;
-	int originY = 40;
-	int cellSize = 60;
+	double scaleFactor = 0.9;
+	int originX = -1;
+	int originY = -1;
+	int cellSize = -1;
 	
-	ChessDelegate chessDelegate;
+	
+	private ChessDelegate chessDelegate;
 
 	// load all images using map
-	Map<String, Image> keyNameValueImage = new HashMap<String, Image>();
+	private Map<String, Image> keyNameValueImage = new HashMap<String, Image>();
 
-	public ChessView() {
+	ChessView(ChessDelegate chessDelegate) {
+		this.chessDelegate=chessDelegate;
 		String[] imageNames = { 
-		"Bishop-black", 
-		"Bishop-white",
-		"King-black",
-		"King-white",
-		"Knight-black",
-		"Knight-white",
-		"Pawn-black",
-		"Pawn-white",
-		"Queen-black",
-		"Queen-white",
-		"Rook-black",
-		"Rook-white"
+		ChessConstants.bBishop, 
+		ChessConstants.wBishop,
+		ChessConstants.bKing,
+		ChessConstants.wKing,
+		ChessConstants.bKnight,
+		ChessConstants.wKnight,
+		ChessConstants.bPawn,
+		ChessConstants.wPawn,
+		ChessConstants.bQueen,
+		ChessConstants.wQueen,
+		ChessConstants.bRook,
+		ChessConstants.wRook,
 			
 		};
 
@@ -57,6 +60,11 @@ public class ChessView extends JPanel {
 	protected void paintChildren(Graphics g) {
 
 		super.paintChildren(g);
+		
+		int smaller = Math.min(getSize().width, getSize().height);
+		cellSize=(int) ((int)((double)smaller)*scaleFactor / 8);
+		originX=(getSize().width-8*cellSize)/2;
+		originX=(getSize().height-8*cellSize)/2;
 
 		Graphics2D g2 = (Graphics2D) g;
 
