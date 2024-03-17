@@ -5,7 +5,7 @@ import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
-public class Chess {
+public class ChessController {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
@@ -21,9 +21,10 @@ public class Chess {
         frame.setLocation(x, y);
 		
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		ChessPanel panel = new ChessPanel();
+		ChessView panel = new ChessView();
 		frame.add(panel);
 		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //		frame.setResizable(false);
 		
 		

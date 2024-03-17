@@ -12,7 +12,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-public class ChessPanel extends JPanel {
+public class ChessView extends JPanel {
 
 	private static final long serialVersionUID = 1038510914214091521L;
 	int originX = 55;
@@ -22,7 +22,7 @@ public class ChessPanel extends JPanel {
 	// load all images using map
 	Map<String, Image> keyNameValueImage = new HashMap<String, Image>();
 
-	public ChessPanel() {
+	public ChessView() {
 		String[] imageNames = { 
 		"Bishop-black", 
 		"Bishop-white",
