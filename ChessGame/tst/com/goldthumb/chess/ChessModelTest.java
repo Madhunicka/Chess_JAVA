@@ -18,6 +18,7 @@ class ChessModelTest {
 		chessModel.reset();
 		assertNull(chessModel.pieceAt(0, 2));
 		System.out.println(chessModel);
+		
 	}
 	
 	
