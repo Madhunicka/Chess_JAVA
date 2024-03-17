@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
@@ -12,7 +14,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-public class ChessView extends JPanel {
+public class ChessView extends JPanel implements MouseListener{
 
 	private static final long serialVersionUID = 1038510914214091521L;
 	double scaleFactor = 0.9;
@@ -25,6 +27,9 @@ public class ChessView extends JPanel {
 
 	// load all images using map
 	private Map<String, Image> keyNameValueImage = new HashMap<String, Image>();
+	private int fromCol=-1;
+	private int fromRow=-1;
+	
 
 	ChessView(ChessDelegate chessDelegate) {
 		this.chessDelegate=chessDelegate;
@@ -53,7 +58,7 @@ public class ChessView extends JPanel {
 
 			e.printStackTrace();
 		}
-
+		addMouseListener(this);
 	}
 
 	@Override
@@ -134,6 +139,44 @@ public class ChessView extends JPanel {
 		g2.setColor(light ? brown : Color.BLACK);
 		g2.fillRect(originX + col * cellSize, originY + row * cellSize, cellSize, cellSize);
 
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		
+		fromCol = (e.getPoint().x-originX)/cellSize;
+		fromRow = (e.getPoint().y-originY)/cellSize;
+
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		int col = (e.getPoint().x-originX)/cellSize;
+		int row = (e.getPoint().y-originY)/cellSize;
+
+//		System.out.println("from "+ fromCol+" to"+ col);
+		chessDelegate.movePiece(fromCol, fromRow, col, row);
+		
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

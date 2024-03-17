@@ -42,8 +42,14 @@ public class ChessController implements ChessDelegate{
 
 	@Override
 	public ChessPiece pieceAt(int col, int row) {
-		// TODO Auto-generated method stub
 		return chessModel.pieceAt(col, row);
+	}
+
+	@Override
+	public void movePiece(int fromCol, int fromRow, int toCol, int toRow) {
+		chessModel.movePiece(fromCol, fromRow, toCol, toRow);
+		panel.repaint();
+		
 	}
 
 }
