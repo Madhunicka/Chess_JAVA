@@ -5,10 +5,13 @@ import java.awt.Toolkit;
 
 import javax.swing.JFrame;
 
-public class ChessController {
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+public class ChessController implements ChessDelegate{
+	private  ChessModel chessModel = new ChessModel();
+	private ChessView panel;
+	
+	ChessController(){
+		
+		chessModel.reset();
 		JFrame frame = new JFrame("Welcome to Chess!!!");
 		frame.setSize(600,600);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -21,16 +24,26 @@ public class ChessController {
         frame.setLocation(x, y);
 		
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		ChessView panel = new ChessView();
+		panel = new ChessView();
+		panel.chessDelegate=this;
 		frame.add(panel);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //		frame.setResizable(false);
 		
+	}
+
+	public static void main(String[] args) {
 		
-		
+		new ChessController();
 		
 
+	}
+
+	@Override
+	public ChessPiece pieceAt(int col, int row) {
+		// TODO Auto-generated method stub
+		return chessModel.pieceAt(col, row);
 	}
 
 }

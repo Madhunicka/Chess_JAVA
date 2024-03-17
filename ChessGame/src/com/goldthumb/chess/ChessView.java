@@ -18,6 +18,8 @@ public class ChessView extends JPanel {
 	int originX = 55;
 	int originY = 40;
 	int cellSize = 60;
+	
+	ChessDelegate chessDelegate;
 
 	// load all images using map
 	Map<String, Image> keyNameValueImage = new HashMap<String, Image>();
@@ -26,16 +28,16 @@ public class ChessView extends JPanel {
 		String[] imageNames = { 
 		"Bishop-black", 
 		"Bishop-white",
-		"King-black.png",
-		"King-white.png",
-		"Knight-black.png",
-		"Knight-white.png",
-		"Pawn-black.png",
-		"Pawn-white.png",
-		"Queen-black.png",
-		"Queen-white.png",
-		"Rook-black.png",
-		"Rook-white.png"
+		"King-black",
+		"King-white",
+		"Knight-black",
+		"Knight-white",
+		"Pawn-black",
+		"Pawn-white",
+		"Queen-black",
+		"Queen-white",
+		"Rook-black",
+		"Rook-white"
 			
 		};
 
@@ -59,14 +61,30 @@ public class ChessView extends JPanel {
 		Graphics2D g2 = (Graphics2D) g;
 
 		drawBoard(g2);
-		drawImage(g2, 0, 0, "Knight-black");
-
-		
+		drawPieces(g2);
 
 	}
 	
+	
+	private void drawPieces(Graphics2D g2) {
+		
+		for(int row=7; row>=0; row--) {
+			for(int col=0; col<8; col++) {
+				
+				ChessPiece p = chessDelegate.pieceAt(col, row);
+				if(p!=null) {
+					drawImage(g2,col,row,p.imgName);
+				}
+				
+			}
+		}
+//		drawImage(g2, 0, 0, "Knight-black");
+
+		
+	}
+	
 	private void drawImage(Graphics2D g2, int col, int row, String imgName) {
-		Image img = keyNameValueImage.get("Bishop-black");
+		Image img = keyNameValueImage.get(imgName);
 		g2.drawImage(img, originX+col * cellSize, originY+row * cellSize,cellSize, cellSize, null);
 		
 		
@@ -105,7 +123,7 @@ public class ChessView extends JPanel {
 	private void drawSquare(Graphics2D g2, int row, int col, boolean light) {
 		Color brown = new Color(193, 154, 107);
 		;
-		g2.setColor(light ? brown : Color.black);
+		g2.setColor(light ? brown : Color.BLACK);
 		g2.fillRect(originX + col * cellSize, originY + row * cellSize, cellSize, cellSize);
 
 	}
