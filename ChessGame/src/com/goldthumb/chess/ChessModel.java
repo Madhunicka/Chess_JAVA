@@ -6,6 +6,7 @@ import java.util.Set;
 public class ChessModel {
 	
 	private Set<ChessPiece> piecesBox = new HashSet<ChessPiece>();
+	private Player playerInTurn = Player.WHITE;
 	
 	void reset() {
 		
@@ -35,12 +36,12 @@ public class ChessModel {
 		piecesBox.add(new ChessPiece(4,0, Player.WHITE, Rank.KING, ChessConstants.wKing  ));
 
 
-
+		playerInTurn = Player.WHITE;
 	}
 	
 	void movePiece(int fromCol, int fromRow, int toCol, int toRow) {
 		ChessPiece candidate = pieceAt(fromCol, fromRow);
-		if(candidate == null) {
+		if(candidate == null || candidate.player!=playerInTurn) {
 			return;
 		}
 		ChessPiece target = pieceAt(toCol, toRow);
@@ -54,6 +55,7 @@ public class ChessModel {
 		
 		candidate.col=toCol;
 		candidate.row=toRow;
+		playerInTurn=playerInTurn == Player.WHITE? Player.BLACK:Player.WHITE;
 		
 		
 	}

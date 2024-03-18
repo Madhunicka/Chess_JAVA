@@ -1,19 +1,26 @@
 package com.goldthumb.chess;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class ChessController implements ChessDelegate{
 	private  ChessModel chessModel = new ChessModel();
-	private ChessView panel;
+	private ChessView chessBoardPanel;
 	
 	ChessController(){
 		
 		chessModel.reset();
 		JFrame frame = new JFrame("Welcome to Chess!!!");
 		frame.setSize(600,600);
+		frame.setLayout(new BorderLayout());
 //		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 //        int screenWidth = screenSize.width;
 //        int screenHeight = screenSize.height;
@@ -24,9 +31,28 @@ public class ChessController implements ChessDelegate{
 //        frame.setLocation(x, y);
 //		
 //		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		panel = new ChessView(this);
-	
-		frame.add(panel);
+		chessBoardPanel = new ChessView(this);
+		
+		frame.add(chessBoardPanel, BorderLayout.CENTER);
+		
+		JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		JButton resetBtn = new JButton("Reset");
+		
+		resetBtn.addActionListener(new ActionListener(){
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				chessModel.reset();
+				chessBoardPanel.repaint();
+			}
+		});
+		
+		
+		buttonsPanel.add(resetBtn);
+		buttonsPanel.add(new JButton("Delete me"));
+		
+		frame.add(buttonsPanel, BorderLayout.PAGE_END);
+		frame.add(chessBoardPanel);
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //		frame.setResizable(false);
@@ -48,7 +74,7 @@ public class ChessController implements ChessDelegate{
 	@Override
 	public void movePiece(int fromCol, int fromRow, int toCol, int toRow) {
 		chessModel.movePiece(fromCol, fromRow, toCol, toRow);
-		panel.repaint();
+		chessBoardPanel.repaint();
 		
 	}
 
