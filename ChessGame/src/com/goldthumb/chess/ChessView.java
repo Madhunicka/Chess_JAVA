@@ -86,7 +86,7 @@ public class ChessView extends JPanel implements MouseListener, MouseMotionListe
 	
 	private void drawPieces(Graphics2D g2) {
 		
-		for(int row=7; row>=0; row--) {
+		for(int row=0; row<8; row++) {
 			for(int col=0; col<8; col++) {
 				
 				ChessPiece p = chessDelegate.pieceAt(col, row);
@@ -108,7 +108,7 @@ public class ChessView extends JPanel implements MouseListener, MouseMotionListe
 	
 	private void drawImage(Graphics2D g2, int col, int row, String imgName) {
 		Image img = keyNameValueImage.get(imgName);
-		g2.drawImage(img, originX+col * cellSize, originY+row * cellSize,cellSize, cellSize, null);
+		g2.drawImage(img, originX+col * cellSize, originY+(7-row) * cellSize,cellSize, cellSize, null);
 		
 		
 	}
@@ -161,7 +161,7 @@ public class ChessView extends JPanel implements MouseListener, MouseMotionListe
 	public void mousePressed(MouseEvent e) {
 		
 		fromCol = (e.getPoint().x-originX)/cellSize;
-		fromRow = (e.getPoint().y-originY)/cellSize;
+		fromRow = 7-(e.getPoint().y-originY)/cellSize;
 		
 		movingPiece = chessDelegate.pieceAt(fromCol, fromRow);
 
@@ -171,10 +171,14 @@ public class ChessView extends JPanel implements MouseListener, MouseMotionListe
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		int col = (e.getPoint().x-originX)/cellSize;
-		int row = (e.getPoint().y-originY)/cellSize;
+		int row = 7-(e.getPoint().y-originY)/cellSize;
+		
+		if(fromCol!= col || fromRow !=row) {
+			chessDelegate.movePiece(fromCol, fromRow, col, row);
+
+		}
 
 //		System.out.println("from "+ fromCol+" to"+ col);
-		chessDelegate.movePiece(fromCol, fromRow, col, row);
 		movingPiece=null;
 		movingPiecePoint=null;
 		
