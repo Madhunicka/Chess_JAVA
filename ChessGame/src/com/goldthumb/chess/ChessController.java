@@ -21,15 +21,18 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-public class ChessController implements ChessDelegate, ActionListener, Runnable{
+public class ChessController implements ChessDelegate, ActionListener{
+	private int PORT = 50000;
 	private  ChessModel chessModel = new ChessModel();
 	private JFrame frame;
 	private ChessView chessBoardPanel;
+	private ServerSocket listener;
+	private Socket socket;
 	private JButton resetBtn;
 	private JButton serverBtn;
 	private JButton clientBtn;
 	private PrintWriter printWriter;
-	private Scanner scanner;
+//	private Scanner scanner;
 	
 	
 	
@@ -80,7 +83,12 @@ public class ChessController implements ChessDelegate, ActionListener, Runnable{
 			public void windowClosing(WindowEvent e) {
 				super.windowClosing(e);
 				printWriter.close();
-				scanner.close();
+//				scanner.close();
+				try {
+					socket.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 				
 			}
 			
@@ -111,10 +119,10 @@ public class ChessController implements ChessDelegate, ActionListener, Runnable{
 		
 	}
 	
-	private void receiveMove() {
+	private void receiveMove(Scanner scanner) {
 		while(scanner.hasNextLine()) {
 			var movStr = scanner.nextLine();  //"0,2,0,1"
-			System.out.println("from server:"+ movStr);
+			System.out.println("chess move received :"+ movStr);
 			var movStrArr = movStr.split(","); //array of strong "0","1","0","2"
 			int fromCol = Integer.parseInt(movStrArr[0]);
 			var fromRow = Integer.parseInt(movStrArr[1]);
@@ -132,75 +140,117 @@ public class ChessController implements ChessDelegate, ActionListener, Runnable{
 			
 		}
 	}
+	
+	
+	
+	private void runSocketServer() {
+		Executors.newFixedThreadPool(1).execute(new Runnable() {
 
+			@Override
+			public void run() {
+				
+				try{
+					listener = new ServerSocket(PORT);
+					System.out.println("server is listening on port "+ PORT);
+					
+						
+							socket = listener.accept();
+							printWriter  = new PrintWriter(socket.getOutputStream(), true);
+							
+							var scanner = new Scanner(socket.getInputStream());
+							
+							receiveMove(scanner);
+//							printWriter.println("0,1,0,3");
+//							System.out.println("server: sending a move to client");
+							
+						
+				
+					
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			
+				
+			}
+			
+		});
+		
+	}
+	
+	private void runSocketClient() {
+		try {
+			
+			socket = new Socket("localhost", PORT);
+			System.out.println("client connected to port "+ PORT);
+
+			var scanner = new Scanner(socket.getInputStream());
+			printWriter = new PrintWriter(socket.getOutputStream(), true);
+			
+		
+		
+		Executors.newFixedThreadPool(1).execute(new Runnable() {
+
+			@Override
+			public void run() {
+				receiveMove(scanner);						
+			}
+			
+		});
+		
+						
+	} 
+	catch (IOException e1) {
+		e1.printStackTrace();
+	}
+		
+	}
+
+	
+	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
 		if(e.getSource()==resetBtn) {
 			chessModel.reset();
 			chessBoardPanel.repaint();
-		}
-		else if(e.getSource() == serverBtn) {
-			frame.setTitle("Chess Server");
-
-			var pool = Executors.newFixedThreadPool(1);
-			pool.execute(this);
-			
-		}else if(e.getSource() == clientBtn){
-			frame.setTitle("Chess Client");
-			
 			try {
-				if(scanner == null || printWriter == null){
-					var socket = new Socket("localhost", 50000);
-					scanner = new Scanner(socket.getInputStream());
-					printWriter = new PrintWriter(socket.getOutputStream(), true);
-					
+				
+				if(listener != null) {
+					listener.close();
 				}
 				
-				Executors.newFixedThreadPool(1).execute(new Runnable() {
-
-					@Override
-					public void run() {
-						receiveMove();						
-					}
-					
-				});
+				if(socket != null) {
+				socket.close();
+				}
+				serverBtn.setEnabled(true);
+				clientBtn.setEnabled(true);
 				
-								
-			} catch (UnknownHostException e1) {
-				e1.printStackTrace();
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
 			
 		}
+		else if(e.getSource() == serverBtn) {
+			serverBtn.setEnabled(false);
+			clientBtn.setEnabled(false);
+			frame.setTitle("Chess Server");
+			runSocketServer();
+			
+			
+			
+		}else if(e.getSource() == clientBtn){
+			serverBtn.setEnabled(false);
+			clientBtn.setEnabled(false);
+
+			frame.setTitle("Chess Client");
+			
+			runSocketClient();
+			
+		}
 		
 		
 	}
 
-	@Override
-	public void run() {
-		try(var listener = new ServerSocket(50000)){
-			System.out.println("server is listening to port 50000");
-			
-				
-					if(scanner == null || printWriter==null) {
-					var socket = listener.accept();
-					printWriter  = new PrintWriter(socket.getOutputStream(), true);
-					
-					scanner = new Scanner(socket.getInputStream());
-					}
-					receiveMove();
-//					printWriter.println("0,1,0,3");
-//					System.out.println("server: sending a move to client");
-					
-				
-		
-			
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		
-	}
+	
 
 }
