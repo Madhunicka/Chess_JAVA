@@ -24,6 +24,7 @@ import javax.swing.SwingUtilities;
 
 public class ChessController implements ChessDelegate, ActionListener{
 	private int PORT = 50000;
+	private String SOCKET_SERVER_ADDR = "localhost";
 	private  ChessModel chessModel = new ChessModel();
 	private JFrame frame;
 	private ChessView chessBoardPanel;
@@ -181,7 +182,7 @@ public class ChessController implements ChessDelegate, ActionListener{
 	private void runSocketClient() {
 		try {
 			
-			socket = new Socket("localhost", PORT);
+			socket = new Socket(SOCKET_SERVER_ADDR, PORT);
 			System.out.println("client connected to port "+ PORT);
 
 			var scanner = new Scanner(socket.getInputStream());
